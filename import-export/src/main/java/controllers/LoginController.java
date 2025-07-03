@@ -41,8 +41,8 @@ public class LoginController extends HttpServlet {
         } else {
             // Store user in session
             request.getSession(true).setAttribute("user", user);
-            forward(request, response, "success", "Login successful. Welcome " + user.getPortId(), "test_session_info.jsp");
-        }
+            response.sendRedirect("ProductController?action=view");
+            }
     }
 
     private static void forward(HttpServletRequest r, HttpServletResponse s,
