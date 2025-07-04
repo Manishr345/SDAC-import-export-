@@ -129,19 +129,6 @@ public class RegistrationController extends HttpServlet {
     }
 
     /* ---------- delete ---------- */
-    private void handleDelete(HttpServletRequest r, HttpServletResponse s) throws Exception {
-        int id = parseId(r.getParameter("port_id"));
-
-        if (crud.delete(id)) {
-            // If deleting self, invalidate session
-            HttpSession ses = r.getSession(false);
-            if (ses != null) ses.invalidate();
-            forward(r, s, "success",
-                    "User deleted. You may register again.", "delete.jsp");
-        } else {
-            forward(r, s, "error", "User not found.", "delete.jsp");
-        }
-    }
 
     /* ---------- logout ---------- */
     private void handleLogout(HttpServletRequest r, HttpServletResponse s) throws IOException {

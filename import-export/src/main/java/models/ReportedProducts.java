@@ -66,4 +66,7 @@ public class ReportedProducts {
 		List<ReportedProducts> list = new ReportedProductsImplementor().showReportedProducts(port);
 		return list;
 	}
+	public void updateStatus(int id) throws Exception {
+		new ReportedProductsImplementor().changeStatus(id);
+	}
 }

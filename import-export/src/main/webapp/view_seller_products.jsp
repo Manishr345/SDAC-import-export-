@@ -3,166 +3,92 @@
 <%@ page import="models.Product"%>
 <%@ page import="models.User"%>
 <%@ page session="true"%>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Products</title>
+<!-- Bootstrap CSS -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+	rel="stylesheet">
 <style>
 body {
-	font-family: Arial, sans-serif;
-	margin: 0;
-}
-
-body {
 	overflow-x: hidden;
-}
-
-body.sidebar-open .main-content {
-	margin-left: 250px; /* equal to sidebar width */
-	transition: margin-left 0.3s;
-}
-
-.navbar {
-	display: flex;
-	background-color: #333;
-	color: white;
-	padding: 10px 20px;
-	align-items: center;
-}
-
-.navbar h1 {
-	flex: 1;
-	margin: 0;
-}
-
-.navbar a {
-	color: white;
-	text-decoration: none;
-	padding: 8px 12px;
-}
-
-.navbar a:hover {
-	background-color: #575757;
-}
-
-.menu-icon {
-	font-size: 24px;
-	cursor: pointer;
-	margin-right: 20px;
 }
 
 .sidebar {
-	height: 100%;
-	width: 0;
+	height: 100vh;
+	width: 250px;
 	position: fixed;
 	top: 0;
-	left: 0;
-	background-color: #222;
-	overflow-x: hidden;
-	transition: 0.3s;
+	left: -250px;
+	background-color: #343a40;
+	transition: all 0.3s;
 	padding-top: 60px;
+	z-index: 1000;
 }
 
 .sidebar a {
-	padding: 10px 20px;
-	text-decoration: none;
-	color: white;
+	padding: 15px;
 	display: block;
+	color: white;
+	text-decoration: none;
 }
 
 .sidebar a:hover {
-	background-color: #575757;
+	background-color: #495057;
 }
 
-.sidebar .closebtn {
-	position: absolute;
-	top: 15px;
-	right: 20px;
-	font-size: 30px;
-	cursor: pointer;
-	color: white;
+.sidebar-open .sidebar {
+	left: 0;
 }
 
-.main-content {
-	margin: 20px;
-	padding-left: 20px;
-}
-
-.card-container {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 20px;
-	margin-top: 20px;
+.sidebar-open .content {
+	margin-left: 250px;
 }
 
 .card {
-	border: 1px solid #ccc;
-	border-radius: 10px;
-	padding: 16px;
-	width: 250px;
-	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-	transition: 0.3s ease-in-out;
-	position: relative;
-}
-
-.card:hover {
-	box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.card h3 {
-	margin-top: 0;
-}
-
-.card p {
-	margin: 8px 0;
-}
-
-.card form {
-	margin-top: 10px;
-}
-
-.btn {
-	padding: 6px 12px;
-	margin-right: 6px;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 14px;
-}
-
-.btn-update {
-	background-color: #007bff;
-	color: white;
-}
-
-.btn-delete {
-	background-color: #dc3545;
-	color: white;
-}
-
-.btn:hover {
-	opacity: 0.9;
+	min-height: 250px;
 }
 </style>
 </head>
 <body>
 
 	<!-- Sidebar -->
-	<div id="mySidebar" class="sidebar">
-		<span class="closebtn" onclick="toggleSidebar()">×</span> <a href="#">Dashboard</a>
-		<a href="#">Orders</a> <a href="#">Settings</a> <a href="#">Reports</a>
-		<a href="#">Help</a>
+	<div class="sidebar bg-dark" id="mySidebar">
+		<a href="javascript:void(0)" class="text-white"
+			onclick="toggleSidebar()">✖ Close</a> <a href="ProductController?action=view">My Products</a> <a
+			href="OrderController">Orders</a> <a href="ReportedProductsController">Reports</a> <a href="#">Sales</a>
 	</div>
 
 	<!-- Navbar -->
-	<div class="navbar">
-		<span class="menu-icon" onclick="toggleSidebar()">☰</span>
-		<h1>SDAC</h1>
-		<a href="#">Home</a> <a href="#">About</a> <a href="#">Contact</a> <a
-			href="session_info.jsp">Profile</a>
-	</div>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+			<span class="navbar-brand" onclick="toggleSidebar()"
+				style="cursor: pointer;">☰</span> <a class="navbar-brand" href="#">SDAC</a>
+			<div class="collapse navbar-collapse">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item"><a class="nav-link active"
+						href="ProductController?action=view">Home</a></li>
+					<li class="nav-item"><a class="nav-link" href="about.jsp">About</a></li>
+					<li class="nav-item"><a class="nav-link" href="contact.jsp">Contact</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="test_session_info.jsp">Profile</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
 
 	<!-- Main Content -->
-	<div class="main-content">
+	<div class="container mt-4 content">
+		<div class="mb-4 text-end">
+			<a href="add_product.jsp" class="btn btn-success"> ➕ Add New
+				Product </a>
+		</div>
+
 		<h2>
 			Products for Seller ID:
 			<%=request.getAttribute("sellerId")%></h2>
@@ -172,54 +98,63 @@ body.sidebar-open .main-content {
 		String error = (String) request.getAttribute("error");
 		if (success != null) {
 		%>
-		<p style="color: green;"><%=success%></p>
+		<div class="alert alert-success"><%=success%></div>
 		<%
 		} else if (error != null) {
 		%>
-		<p style="color: red;"><%=error%></p>
+		<div class="alert alert-danger"><%=error%></div>
 		<%
 		}
 		%>
 
-		<div class="card-container">
+		<div class="row">
 			<%
 			List<Product> products = (List<Product>) request.getAttribute("productList");
 
 			if (products == null || products.isEmpty()) {
 			%>
-			<p>No products found!</p>
+			<div class="col-12">
+				<p>No products found!</p>
+			</div>
 			<%
 			} else if (products.size() == 1 && products.get(0).getProduct_id() == 0 && products.get(0).getQuantity() == 0
 					&& products.get(0).getPrice() == 0.0) {
 			%>
-			<p><%=products.get(0).getProduct_name()%></p>
+			<div class="col-12">
+				<p><%=products.get(0).getProduct_name()%></p>
+			</div>
 			<%
 			} else {
 			for (Product p : products) {
 			%>
-			<div class="card">
-				<h3><%=p.getProduct_name()%></h3>
-				<p>
-					<strong>Product ID:</strong>
-					<%=p.getProduct_id()%></p>
-				<p>
-					<strong>Quantity:</strong>
-					<%=p.getQuantity()%></p>
-				<p>
-					<strong>Price:</strong> ₹<%=p.getPrice()%></p>
+			<div class="col-md-4 mb-4">
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<h5 class="card-title"><%=p.getProduct_name()%></h5>
+						<p class="card-text">
+							<strong>Product ID:</strong>
+							<%=p.getProduct_id()%></p>
+						<p class="card-text">
+							<strong>Quantity:</strong>
+							<%=p.getQuantity()%></p>
+						<p class="card-text">
+							<strong>Price:</strong> ₹<%=p.getPrice()%></p>
 
-				<a href="update_product.jsp?product_id=<%=p.getProduct_id()%>">
-					<button type="button" class="btn btn-update">Update</button>
-				</a>
+						<a href="update_product.jsp?product_id=<%=p.getProduct_id()%>"
+							class="btn btn-primary btn-sm me-2">Update</a>
 
-				<form action="ProductController" method="post"
-					style="display: inline;">
-					<input type="hidden" name="action" value="delete" /> <input
-						type="hidden" name="product_id" value="<%=p.getProduct_id()%>" />
-					<button type="submit" class="btn btn-delete"
-						onclick="return confirm('Are you sure to delete this product?');">
-						Delete</button>
-				</form>
+						<form action="ProductController" method="post" class="d-inline">
+							<input type="hidden" name="action" value="delete" /> <input
+								type="hidden" name="product_id" value="<%=p.getProduct_id()%>" />
+							<button type="submit" class="btn btn-danger"
+								onclick="return confirm('Are you sure you want to delete this product?');"
+								title="Delete Product">
+								<i class="bi bi-trash"></i>
+							</button>
+
+						</form>
+					</div>
+				</div>
 			</div>
 			<%
 			}
@@ -228,21 +163,15 @@ body.sidebar-open .main-content {
 		</div>
 	</div>
 
+	<!-- Bootstrap JS + Popper -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 	<script>
 		function toggleSidebar() {
-			const body = document.body;
-			const sidebar = document.getElementById("mySidebar");
-
-			if (sidebar.style.width === "250px") {
-				sidebar.style.width = "0";
-				body.classList.remove("sidebar-open");
-			} else {
-				sidebar.style.width = "250px";
-				body.classList.add("sidebar-open");
-			}
+			document.body.classList.toggle("sidebar-open");
 		}
 	</script>
-
 
 </body>
 </html>

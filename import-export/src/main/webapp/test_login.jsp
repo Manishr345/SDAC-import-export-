@@ -7,6 +7,7 @@
     <title>Login</title>
 </head>
 <body>
+
 <div class="container">
     <h2>Login</h2>
 
@@ -14,7 +15,7 @@
         String error = (String) request.getAttribute("error");
         String success = (String) request.getAttribute("success");
     %>
-
+	
     <% if (success != null) { %>
         <div class="success"><%= success %></div>
     <% } else if (error != null) { %>
@@ -22,6 +23,7 @@
     <% } %>
 
     <form action="/import-export/Login" method="post">
+            <input type="hidden" name="action" value="login">
         <input type="text" name="port_id" placeholder="Port ID" required>
         <input type="password" name="password" placeholder="Password" required>
         <select name="role" required>

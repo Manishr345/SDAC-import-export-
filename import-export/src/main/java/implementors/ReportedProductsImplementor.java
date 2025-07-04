@@ -7,15 +7,14 @@ import java.util.List;
 
 import db_config.DbConnection;
 import models.ReportedProducts;
-import models.SellerPort;
 import operations.ReportedProductOpertions;
 
 public class ReportedProductsImplementor implements ReportedProductOpertions{
 
 	@Override
-	public void changeStatus(ReportedProducts products) throws Exception {
-		CallableStatement cs = DbConnection.getConnection().prepareCall("{call resolve_report(?);}");
-		cs.setInt(0, products.getReport_id());
+	public void changeStatus(int id) throws Exception {
+		CallableStatement cs = DbConnection.getConnection().prepareCall("{call resolve_report(?)}");
+		cs.setInt(1, id);
 		cs.executeUpdate();
 	}
 
@@ -42,6 +41,12 @@ public class ReportedProductsImplementor implements ReportedProductOpertions{
 	    cs.close();
 
 	    return report;
+	}
+	
+	@Override
+	public String updateIssueType(int reportId, String newIssueType) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

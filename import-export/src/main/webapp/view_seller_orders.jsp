@@ -1,9 +1,6 @@
-<%@ page import="java.util.List" %>
-<%@ page import="models.ReportedProducts" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
-<!DOCTYPE html>
-
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page import="java.util.List"%>
+<%@ page import="models.Order"%>
 <html>
 <head>
 <title>Products</title>
@@ -83,53 +80,66 @@ body {
 	</nav>
 
 	<!-- Main Content -->
-	<div class="container">
-    <h2 class="mb-4">Reported Products List</h2>
+	<h3 class="mb-4">Seller Orders</h3>
 
-    <%
-        List<ReportedProducts> list = (List<ReportedProducts>) request.getAttribute("reportedList");
-        if (list == null || list.isEmpty()) {
-    %>
-        <div class="alert alert-warning text-center">No reports available.</div>
-    <%
-        } else {
-    %>
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark text-center">
-            <tr>
-                <th>Report ID</th>
-                <th>Consumer Port ID</th>
-                <th>Product ID</th>
-                <th>Issue Type</th>
-                <th>Status</th>
-                <th>Action Taken</th>
-                <th>Report Date</th>
-                <th>Update</th>
-            </tr>
-        </thead>
-        <tbody class="text-center">
-        <% for (ReportedProducts p : list) { %>
-            <tr>
-                <td><%= p.getReport_id() %></td>
-                <td><%= p.getConsumer_port_id() %></td>
-                <td><%= p.getProduct_id() %></td>
-                <td><%= p.getIssue_type() %></td>
-                <td><%= p.getStatus() %></td>
-                <td><%= p.getAction_taken() %></td>
-                <td><%= p.getReport_date() %></td>
-                <td>
-                    <form action="ReportedProductsController" method="post" class="d-flex flex-column gap-1">
-                        <input type="hidden" name="report_id" value="<%= p.getReport_id() %>">
-                        <input type="hidden" name="action" value="updateStatus">
-                        <button class="btn btn-primary btn-sm" type="submit">Update</button>
-                    </form>
-                </td>
-            </tr>
-        <% } %>
-        </tbody>
-    </table>
-    <% } %>
-</div>
+	<%
+	String msg = (String) request.getAttribute("message");
+	if (msg != null) {
+	%>
+	<div class="alert alert-success"><%=msg%></div>
+	<%
+	}
+	%>
+
+	<table class="table table-bordered table-hover">
+		<thead class="table-dark">
+			<tr>
+				<th>Order ID</th>
+				<th>Product ID</th>
+				<th>Product</th>
+				<th>Price</th>
+				<th>Consumer ID</th>
+				<th>Quantity</th>
+				<th>Date</th>
+				<th>Shipped</th>
+				<th>Out for Delivery</th>
+				<th>Delivered</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<%
+			List<Order> orders = (List<Order>) request.getAttribute("orderList");
+			if (orders != null) {
+				for (Order o : orders) {
+			%>
+			<form action="OrderController" method="post">
+				<tr>
+					<td><%=o.getOrderId()%></td>
+					<td><%=o.getProductId()%></td>
+					<td><%=o.getProductName()%></td>
+					<td>₹<%=o.getPrice()%></td>
+					<td><%=o.getConsumerPortId()%></td>
+					<td><%=o.getQuantity()%></td>
+					<td><%=o.getOrderDate()%></td>
+					<td><input type="checkbox" name="shipped"
+						<%=o.isShipped() ? "checked" : ""%> /></td>
+					<td><input type="checkbox" name="out_for_delivery"
+						<%=o.isOutForDelivery() ? "checked" : ""%> /></td>
+					<td><input type="checkbox" name="delivered"
+						<%=o.isDelivered() ? "checked" : ""%> /></td>
+					<td><input type="hidden" name="order_id"
+						value="<%=o.getOrderId()%>" />
+						<button type="submit" class="btn btn-primary btn-sm">Update</button>
+					</td>
+				</tr>
+			</form>
+			<%
+			}
+			}
+			%>
+		</tbody>
+	</table>
 
 	<!-- Bootstrap JS + Popper -->
 	<script
@@ -143,3 +153,4 @@ body {
 
 </body>
 </html>
+

@@ -89,7 +89,7 @@
     <% } %>
 
     <div class="actions">
-        <a href="login.jsp">Already have an account? Login</a>
+        <a href="test_login.jsp">Already have an account? Login</a>
     </div>
 
     <form action="/import-export/Registration" method="post">

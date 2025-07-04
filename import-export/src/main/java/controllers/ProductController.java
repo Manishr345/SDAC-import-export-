@@ -41,8 +41,9 @@ public class ProductController extends HttpServlet {
 
             ProductImplementor impl = new ProductImplementor();
             String result = impl.addProduct(p);
+            request.getRequestDispatcher("ProductController?action=view").forward(request, response);
 
-            out.println("<h3>" + result + "</h3>");
+            
 
         } else if ("update".equals(action)) {
             try {
@@ -65,7 +66,7 @@ public class ProductController extends HttpServlet {
                         request.setAttribute("productList", list);
                         request.setAttribute("sellerId", user.getPortId());
                         request.setAttribute("success", "Product updated successfully.");
-                        request.getRequestDispatcher("view_seller_products.jsp").forward(request, response);
+                        request.getRequestDispatcher("ProductController?action=view").forward(request, response);
                     } else {
                         request.setAttribute("error", "Session expired. Please login again.");
                         request.getRequestDispatcher("test_login.jsp").forward(request, response);
@@ -88,7 +89,7 @@ public class ProductController extends HttpServlet {
             ProductImplementor impl = new ProductImplementor();
             String result = impl.deleteProduct(p);
 
-            out.println("<h3>" + result + "</h3>");
+            request.getRequestDispatcher("ProductController?action=view").forward(request, response);
 
         } else if ("view".equals(action)) {
         	HttpSession session = request.getSession(false);
@@ -100,8 +101,6 @@ public class ProductController extends HttpServlet {
         	 User user = (User) session.getAttribute("user");
             ProductImplementor impl = new ProductImplementor();
             List<Product> list = impl.viewSellerProducts((String) user.getPortId());
-            System.out.println("I am " + user.getPortId() + " gandu");
-
             request.setAttribute("productList", list);
             request.setAttribute("sellerId", user.getPortId());
             request.getRequestDispatcher("view_seller_products.jsp").forward(request, response);

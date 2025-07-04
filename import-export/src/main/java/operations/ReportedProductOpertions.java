@@ -6,6 +6,7 @@ import models.ReportedProducts;
 import models.SellerPort;
 
 public interface ReportedProductOpertions {
-	void changeStatus(ReportedProducts products) throws Exception;
 	List<ReportedProducts> showReportedProducts(String id) throws Exception;
+    void changeStatus(int reportId) throws Exception;
+    String updateIssueType(int reportId, String newIssueType) throws Exception;
 }

@@ -54,23 +54,42 @@ public class RegisterOperations {
 
 	/* UPDATE */
 	public boolean update(User u) throws Exception {
-		String sql = "UPDATE users SET password=?, role=? WHERE port_id=?";
-		Connection c = DbConnection.getConnection();
-		CallableStatement p = c.prepareCall(sql);
-		p.setString(1, u.getPassword());
-		p.setString(2, u.getRole());
-		p.setString(3, u.getPortId());
+		CallableStatement p = null;
+		if(u.getRole().equals("Seller")) {
+			String sql = "{call updateSeller(?, ?, ?, ?)}";
+			Connection c = DbConnection.getConnection();
+			p = c.prepareCall(sql);
+			p.setString(2, u.getPassword());
+			p.setString(4, u.getRole());
+			p.setString(1, u.getPortId());
+			p.setString(3, u.getLocation());
+		}
+		else {
+			String sql = "{call updateConsumer(?, ?, ?, ?)}";
+			Connection c = DbConnection.getConnection();
+			p = c.prepareCall(sql);
+			p.setString(2, u.getPassword());
+			p.setString(4, u.getRole());
+			p.setString(1, u.getPortId());
+			p.setString(3, u.getLocation());
+		}
 		return p.executeUpdate() == 1;
 
 	}
 
 	/* DELETE */
-	public boolean delete(int id) throws Exception {
-		try (Connection c = DbConnection.getConnection();
-				PreparedStatement p = c.prepareStatement("DELETE FROM users WHERE port_id=?")) {
-			p.setInt(1, id);
-			return p.executeUpdate() == 1;
+	public boolean delete(String id, String role) throws Exception {
+		CallableStatement p = null;
+		Connection c = DbConnection.getConnection();
+		if(role.equals("Consumer")) {
+			p = c.prepareCall("{call deleteConsumer(?)}");
+			p.setString(1, id);
 		}
+		else {
+			p = c.prepareCall("{call deleteSeller(?)}");
+			p.setString(1, id);
+		}
+			return p.executeUpdate() == 1;
 	}
 
 	/* READ all (optional) */
