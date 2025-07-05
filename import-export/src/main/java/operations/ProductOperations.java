@@ -10,4 +10,5 @@ public interface ProductOperations {
 	String updateProduct(Product pojo);
 	String deleteProduct(models.Product port);
 	List<Product> viewSellerProducts(String port);
+	List<Product> viewAllProducts();
 }

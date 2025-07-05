@@ -99,12 +99,22 @@ public class ProductController extends HttpServlet {
         	    return;
         	}
         	 User user = (User) session.getAttribute("user");
-            ProductImplementor impl = new ProductImplementor();
-            List<Product> list = impl.viewSellerProducts((String) user.getPortId());
-            request.setAttribute("productList", list);
-            request.setAttribute("sellerId", user.getPortId());
-            request.getRequestDispatcher("view_seller_products.jsp").forward(request, response);
-        }
+            if(user.getRole().equals("Seller")) {
+            	ProductImplementor impl = new ProductImplementor();
+                List<Product> list = impl.viewSellerProducts((String) user.getPortId());
+                request.setAttribute("productList", list);
+                request.setAttribute("sellerId", user.getPortId());
+                request.getRequestDispatcher("view_seller_products.jsp").forward(request, response);
+
+            }else {
+            	ProductImplementor impl = new ProductImplementor();
+                List<Product> list = impl.viewAllProducts();
+                request.setAttribute("productList", list);
+                request.setAttribute("conumerId", user.getPortId());
+                request.getRequestDispatcher("view_seller_products.jsp").forward(request, response);
+
+            }
+            }
 	}
     
 

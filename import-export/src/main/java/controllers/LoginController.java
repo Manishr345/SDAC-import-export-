@@ -83,8 +83,7 @@ public class LoginController extends HttpServlet {
             // Successful login
             request.getSession(true).setAttribute("user", user);
             System.out.println(user.getPortId() + role);
-            response.sendRedirect("ProductController?action=view");
-        }
+            response.sendRedirect("ProductController?action=view");        }
     }
 
 

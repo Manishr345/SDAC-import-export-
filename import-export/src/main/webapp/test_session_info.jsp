@@ -60,14 +60,28 @@ body {
 <body>
 
 	<!-- Sidebar -->
-	<div class="sidebar bg-dark" id="mySidebar">
+	<%
+HttpSession httpSession = request.getSession(false);
+User user = (User) httpSession.getAttribute("user");
+if(user.getRole().equals("Consumer")) {
+%>
+<div class="sidebar bg-dark" id="mySidebar">
 		<a href="javascript:void(0)" class="text-white"
 			onclick="toggleSidebar()">✖ Close</a> <a
-			href="view_seller_products.jsp">Home</a> <a
-			href="ProductController?action=view">My Products</a> <a
-			href="OrderController">Orders</a> <a
-			href="ReportedProductsController">Reports</a> <a href="#">Sales</a>
+			href="ProductController?action=view">Products</a> <a
+			href="track_orders.jsp">Orders</a> <a
+			href="view_consumer_reports.jsp">Reports</a>
 	</div>
+<%
+}else {
+%>
+	
+<div class="sidebar bg-dark" id="mySidebar">
+    <a href="javascript:void(0)" class="text-white" onclick="toggleSidebar()">✖ Close</a>
+    <a href="ProductController?action=view">My Products</a> <a
+			href="OrderController">Orders</a> <a href="ReportedProductsController">Reports</a> <a href="#">Sales</a>
+</div>
+<%} %>
 
 	<!-- Navbar -->
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -93,7 +107,6 @@ body {
 			<h2 class="mb-4">Session Information</h2>
 
 			<%
-			User user = (User) session.getAttribute("user");
 			if (user != null) {
 			%>
 			<div class="card shadow-sm border-0 mb-3">

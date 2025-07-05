@@ -55,6 +55,11 @@ body {
 }
 </style>
 </head>
+<%
+HttpSession httpSession = request.getSession(false);
+User user = (User) httpSession.getAttribute("user");
+if(user.getRole().equals("Seller")) {
+%>
 <body>
 
 	<!-- Sidebar -->
@@ -140,7 +145,7 @@ body {
 						<p class="card-text">
 							<strong>Price:</strong> ₹<%=p.getPrice()%></p>
 
-						<a href="update_product.jsp?product_id=<%=p.getProduct_id()%>"
+						<a href="update_product.jsp?product_id=<%=p.getProduct_id()%>&name=<%=p.getProduct_name()%>&price=<%=p.getPrice() %>&quantity=<%=p.getQuantity()%>"
 							class="btn btn-primary btn-sm me-2">Update</a>
 
 						<form action="ProductController" method="post" class="d-inline">
@@ -174,4 +179,129 @@ body {
 	</script>
 
 </body>
+<%
+}else{
+%>
+<body>
+
+	<!-- Sidebar -->
+	<div class="sidebar bg-dark" id="mySidebar">
+		<a href="javascript:void(0)" class="text-white"
+			onclick="toggleSidebar()">✖ Close</a> <a
+			href="ProductController?action=view">Products</a> <a
+			href="track_orders.jsp">Orders</a> <a
+			href="view_consumer_reports.jsp">Reports</a>
+	</div>
+
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+			<span class="navbar-brand" onclick="toggleSidebar()"
+				style="cursor: pointer;">☰</span> <a class="navbar-brand" href="#">SDAC</a>
+			<div class="collapse navbar-collapse">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item"><a class="nav-link active"
+						href="ProductController?action=view">Home</a></li>
+					<li class="nav-item"><a class="nav-link" href="about.jsp">About</a></li>
+					<li class="nav-item"><a class="nav-link" href="contact.jsp">Contact</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="test_session_info.jsp">Profile</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Main Content -->
+	<div class="container mt-4 content">
+		<div class="mb-4 text-end">
+			<a href="cart.jsp" class="btn btn-success"> 🛒 Cart
+			</a>
+		</div>
+
+		<h2>All Products:</h2>
+
+		<%
+		String success = (String) request.getAttribute("success");
+		String error = (String) request.getAttribute("error");
+		if (success != null) {
+		%>
+		<div class="alert alert-success"><%=success%></div>
+		<%
+		} else if (error != null) {
+		%>
+		<div class="alert alert-danger"><%=error%></div>
+		<%
+		}
+		%>
+
+		<div class="row">
+			<%
+			List<Product> products = (List<Product>) request.getAttribute("productList");
+
+			if (products == null || products.isEmpty()) {
+			%>
+			<div class="col-12">
+				<p>No products found!</p>
+			</div>
+			<%
+			} else if (products.size() == 1 && products.get(0).getProduct_id() == 0 && products.get(0).getQuantity() == 0
+					&& products.get(0).getPrice() == 0.0) {
+			%>
+			<div class="col-12">
+				<p><%=products.get(0).getProduct_name()%></p>
+			</div>
+			<%
+			} else {
+			for (Product p : products) {
+			%>
+			<div class="col-md-4 mb-4">
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<h5 class="card-title"><%=p.getProduct_name()%></h5>
+						<p class="card-text">
+							<strong>Product ID:</strong>
+							<%=p.getProduct_id()%></p>
+						<p class="card-text">
+							<strong>Quantity:</strong>
+							<%=p.getQuantity()%></p>
+						<p class="card-text">
+							<strong>Price:</strong> ₹<%=p.getPrice()%></p>
+
+						<form action="CartController" method="post" class="mt-2">
+<input type="hidden" name="seller_port_id" value="<%= p.getSeller_port_id() %>">
+							<input type="hidden" name="product_id"
+								value="<%=p.getProduct_id()%>"> <input type="hidden"
+								name="product_name" value="<%=p.getProduct_name()%>"> <input
+								type="hidden" name="price" value="<%=p.getPrice()%>"> <input
+								type="number" name="quantity" value="1" min="1"
+								class="form-control mb-2" required>
+							<button type="submit" class="btn btn-warning w-100">Add
+								to Cart 🛒</button>
+						</form>
+
+					</div>
+					
+				</div>
+			</div>
+			<%
+			}
+			}
+			%>
+		</div>
+	</div>
+
+	<!-- Bootstrap JS + Popper -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		function toggleSidebar() {
+			document.body.classList.toggle("sidebar-open");
+		}
+	</script>
+
+</body>
+<%
+}
+%>
 </html>

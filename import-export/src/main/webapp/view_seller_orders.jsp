@@ -123,7 +123,8 @@ body {
 					<td><%=o.getQuantity()%></td>
 					<td><%=o.getOrderDate()%></td>
 					<td><input type="checkbox" name="shipped"
-						<%=o.isShipped() ? "checked" : ""%> /></td>
+						<%=o.isShipped() ? "checked" : ""%> />
+						<input type="hidden" name="action" value="changeStatus" /></td>
 					<td><input type="checkbox" name="out_for_delivery"
 						<%=o.isOutForDelivery() ? "checked" : ""%> /></td>
 					<td><input type="checkbox" name="delivered"

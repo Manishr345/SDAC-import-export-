@@ -114,6 +114,42 @@ public class ProductImplementor implements ProductOperations {
 	    }
 	    return list;
 	}
+
+	@Override
+	public List<Product> viewAllProducts() {
+		List<Product> list = new ArrayList<>();
+	    try {
+	        CallableStatement cs = DbConnection.getConnection().prepareCall("{call view_all_products()}");
+
+	        ResultSet rs = cs.executeQuery();
+
+	        if (rs.next()) {
+	            // Check if result only has a "message" column
+	            if (rs.getMetaData().getColumnCount() == 1 &&
+	                rs.getMetaData().getColumnLabel(1).equalsIgnoreCase("message")) {
+
+	                // Store the message in a custom dummy product for controller to handle
+	                Product msgProduct = new Product();
+	                msgProduct.setProduct_name(rs.getString("message"));
+	                list.add(msgProduct);
+	            } else {
+	                do {
+	                    Product p = new Product();
+	                    p.setProduct_id(rs.getInt("product_id"));
+	                    p.setSeller_port_id(rs.getString("seller_port_id"));
+	                    p.setProduct_name(rs.getString("product_name"));
+	                    p.setQuantity(rs.getInt("quantity"));
+	                    p.setPrice(rs.getDouble("price"));
+	                    list.add(p);
+	                } while (rs.next());
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+
+	}
 	
 
 	
