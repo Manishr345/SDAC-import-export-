@@ -45,18 +45,25 @@ public class LoginController extends HttpServlet {
                 String portId = request.getParameter("port_id");
                 String role = request.getParameter("role");
 
-                User user = new User();
-                user.setPortId(portId);  
-                user.setRole(role);
+                if (role != null) {
+                    role = role.toLowerCase(); // Normalize
+                }
+
+                System.out.println("Deleting user: " + portId + ", Role: " + role);
+
                 RegisterOperations operations = new RegisterOperations();
-                operations.delete(user.getPortId(), user.getRole());  // Implement updateUser() in User.java
-                HttpSession httpSession = request.getSession(false);
-                HttpSession ses = request.getSession(false);
-                if (ses != null) ses.invalidate();
+                String result = operations.delete(portId, role);
+
+                System.out.println("Deletion result: " + result);
+
+                HttpSession session = request.getSession(false);
+                if (session != null) session.invalidate();
+
                 response.sendRedirect("/import-export/test_register.jsp");
+            }
 
                 
-            }
+            
         } catch (Exception e) {
             e.printStackTrace();
             forward(request, response, "error", "Login failed: " + e.getMessage(), "test_session_info.jsp");
@@ -67,6 +74,10 @@ public class LoginController extends HttpServlet {
         String id = request.getParameter("port_id");
         String pw = request.getParameter("password");
         String role = request.getParameter("role");
+
+        if (role != null) {
+            role = role.toLowerCase();  // Normalize role to match DB procedure expectations
+        }
 
         if (id == null || id.isBlank() || pw == null || pw.isBlank() || role == null || role.isBlank()) {
             forward(request, response, "error", "All fields are required.", "test_login.jsp");

@@ -78,19 +78,44 @@ public class RegisterOperations {
 	}
 
 	/* DELETE */
-	public boolean delete(String id, String role) throws Exception {
-		CallableStatement p = null;
-		Connection c = DbConnection.getConnection();
-		if(role.equals("Consumer")) {
-			p = c.prepareCall("{call deleteConsumer(?)}");
-			p.setString(1, id);
-		}
-		else {
-			p = c.prepareCall("{call deleteSeller(?)}");
-			p.setString(1, id);
-		}
-			return p.executeUpdate() == 1;
+
+	public String delete(String portId, String role) {
+	    String result = "";
+
+	    try (Connection con = DbConnection.getConnection()) {
+	        CallableStatement cs;
+
+	        if (role.equalsIgnoreCase("consumer")) {
+	            cs = con.prepareCall("{CALL deleteConsumer(?)}");
+	        } else if (role.equalsIgnoreCase("seller")) {
+	            cs = con.prepareCall("{CALL deleteSeller(?)}");
+	        } else {
+	            return "Invalid role: " + role;
+	        }
+
+	        cs.setString(1, portId);
+	        boolean hasResult = cs.execute();
+
+	        if (hasResult) {
+	            try (ResultSet rs = cs.getResultSet()) {
+	                if (rs.next()) {
+	                    result = rs.getString(1);  // message returned by SELECT in stored procedure
+	                    System.out.println("Delete Result: " + result);
+	                }
+	            }
+	        } else {
+	            result = "No result from stored procedure.";
+	            System.out.println(result);
+	        }
+
+	    } catch (Exception e) {
+	        result = "Error: " + e.getMessage();
+	        e.printStackTrace();
+	    }
+
+	    return result;
 	}
+
 
 	/* READ all (optional) */
 	public List<User> all() throws Exception {
